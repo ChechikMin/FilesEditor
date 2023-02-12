@@ -14,16 +14,7 @@ FilesEditor::FilesEditor(QWidget *parent)
     connect(m_impl.data(), &Impl::openFile, this, &FilesEditor::setOpenPath );
 
     connect(m_impl.data(), &Impl::operationChanged, this, &FilesEditor::createOperation );
-    connect(m_impl.data(), &Impl::transform, this, [this](const QString& operand, bool isDelete)
-    {
-
-        double key;
-        std::istringstream(operand.toStdString()) >> std::hex >> key;
-
-        char * hash = reinterpret_cast<char *>(&key);
-        transformFile(hash, isDelete);
-
-    } );
+    connect(m_impl.data(), &Impl::transform, this, &FilesEditor::transformFile);
 }
 
 void FilesEditor::createOperation(Impl::Operations operation)
@@ -57,8 +48,14 @@ void FilesEditor::createOperation(Impl::Operations operation)
     }
 }
 
-void FilesEditor::transformFile(const char * value, bool isDelete)
+void FilesEditor::transformFile(const QString& operand, bool isDelete)
 {
+
+    double key;
+    std::istringstream(operand.toStdString()) >> std::hex >> key;
+
+    uint64_t* hash = (uint64_t*)&key;
+
     QFile outFile(m_openPath);
 
     QFileInfo info(m_openPath);
@@ -103,7 +100,7 @@ void FilesEditor::transformFile(const char * value, bool isDelete)
 
 
     QByteArray information = outFile.readAll();
-    m_operation->transform(information, value);
+   m_operation->transform(information, hash);
 
     inFile.write(information);
     QMessageBox::information(nullptr,"", "Ready!");

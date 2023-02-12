@@ -9,12 +9,12 @@
 #include <bitset>
 #include <QProcess>
 
-constexpr size_t size = sizeof (const char *);
+constexpr size_t size = sizeof (uint64_t) * CHAR_BIT;
 
 class BitOperation
 {
 public:
-    virtual void transform(QByteArray&, const char * rightOperand) = 0;
+    virtual void transform(QByteArray&, const uint64_t * rightOperand) = 0;
     virtual ~BitOperation() = default;
 };
 
@@ -22,7 +22,7 @@ class OR : public BitOperation
 {
 
 
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         size_t i = 0;
 
@@ -37,7 +37,7 @@ class OR : public BitOperation
 
 class XOR : public BitOperation
 {
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         size_t i = 0;
 
@@ -52,7 +52,7 @@ class XOR : public BitOperation
 
 class NOT : public BitOperation
 {
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         std::transform(arr.begin(), arr.end(),arr.begin(), [](char byte)
         {
@@ -64,7 +64,7 @@ class NOT : public BitOperation
 
 class AND : public BitOperation
 {
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         size_t i = 0;
 
@@ -79,7 +79,7 @@ class AND : public BitOperation
 
 class SHLD : public BitOperation
 {
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         size_t i = 0;
 
@@ -94,7 +94,7 @@ class SHLD : public BitOperation
 
 class SHRD : public BitOperation
 {
-    virtual void transform(QByteArray& arr, const char * rightOperand)
+    virtual void transform(QByteArray& arr, const uint64_t * rightOperand)
     {
         size_t i = 0;
 
@@ -125,7 +125,7 @@ public:
     void setSavePath(const QString& path){m_savePath = path;}
     void setOpenPath(const QString& path){m_openPath = path;}
     void createOperation(Impl::Operations);
-    void transformFile(const char * value, bool isDelete);
+    void transformFile(const QString& value, bool isDelete);
     ~FilesEditor();
 };
 
